@@ -1,45 +1,74 @@
-<h1 align="center">Base46: Pywal Edition</h1>
+<h1 align="center">WallSync</h1>
 
-<p align="center"><i>Pywal and Matugen support for NvChad!</i></p>
+<p align="center"><i>Pywal and Matugen support for NvChad, packaged as a Lazy-loadable plugin.</i></p>
 
 > [!NOTE]
-> Support for Pywal requires these Python libraries to be installed:
-> - `pywal`
-> - `watchdog`
+> WallSync is written in Lua and no longer needs the old Python watcher.
+> You still need either `pywal` or `matugen` to generate the color files.
 
 ## Installation
-```bash
-cd ~/.config/nvim
-git clone https://github.com/NvChad/pywal
-```
-Add this at the end of your `init.lua` file:
+
+Add WallSync to your NvChad Lazy specs, for example in `lua/plugins/init.lua`:
+
 ```lua
-os.execute("python ~/.config/nvim/pywal/chadwal.py &> /dev/null &")
-
-local autocmd = vim.api.nvim_create_autocmd
-
-autocmd("Signal", {
-  pattern = "SIGUSR1",
-  callback = function()
-    require('nvchad.utils').reload()
-  end
-})
+return {
+  {
+    "Axenide/WallSync",
+    lazy = false,
+    main = "wallsync",
+    opts = {},
+  },
+}
 ```
-Now you need to generate your Pywal theme again using `wal -i <image>`. If not, `chadwal` will default to `gruvchad` colors.
+
+Then select the `chadwal` theme in your NvChad config and generate your colors again:
+
+```bash
+wal -i <image>
+```
+
+WallSync installs the Pywal templates automatically, watches `~/.cache/wal/base46-dark.lua` and `~/.cache/wal/base46-light.lua`, copies the active theme to NvChad's `base46/themes/chadwal.lua`, and reloads NvChad when the generated theme changes.
+
+### Configuration
+
+The default setup is enough for a standard NvChad installation. You can override paths if needed:
+
+```lua
+{
+  "Axenide/WallSync",
+  lazy = false,
+  main = "wallsync",
+  opts = {
+    auto_start = true,
+    auto_install_templates = true,
+    notify = true,
+    debounce_ms = 500,
+  },
+}
+```
+
+Available commands:
+
+- `:WallSyncInstallTemplates` copies the bundled Pywal templates to `~/.config/wal/templates`.
+- `:WallSyncStart` starts the file watchers for the current Neovim session.
+- `:WallSyncSync` manually syncs the currently generated Base46 theme.
+- `:WallSyncStop` stops the file watchers for the current Neovim session.
 
 ### Matugen support
-Add this your `~/.config/matugen/config.toml` file:
+
+Add this to your `~/.config/matugen/config.toml` file:
+
 ```toml
 [templates.nvim]
-input_path = '~/.config/nvim/pywal/matugen.lua'
+input_path = '~/.local/share/nvim/lazy/WallSync/templates/matugen.lua'
 output_path = '~/.cache/wal/base46-dark.lua'
 
 [templates.nvimlight]
-input_path = '~/.config/nvim/pywal/matugen.lua'
+input_path = '~/.local/share/nvim/lazy/WallSync/templates/matugen.lua'
 output_path = '~/.cache/wal/base46-light.lua'
 
 [templates.pywal]
-input_path = '~/.config/nvim/pywal/waltemplate'
+input_path = '~/.local/share/nvim/lazy/WallSync/templates/waltemplate'
 output_path = '~/.cache/wal/colors'
 
 [config.custom_colors.red]
@@ -71,7 +100,11 @@ color = "#FFFFFF"
 blend = true
 ```
 
-Just like with Pywal, you need to generate your theme again using `matugen image <image>`. If not, `chadwal` will default to `gruvchad` colors.
+If your Lazy install path or repository directory name is different, update the three `input_path` values accordingly. Then generate your theme again:
+
+```bash
+matugen image <image>
+```
 
 Select `chadwal` theme and enjoy!
 

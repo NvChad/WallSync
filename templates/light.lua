@@ -27,14 +27,14 @@ M.base_30 = {{
   cyan = "{color4}",
   pmenu_bg = "{color8}",
   folder_bg = "{color4}",
-  }}
-  
-  M.base_30.statusline_bg = M.base_30.black2
-  M.base_30.lightbg = M.base_30.one_bg
-  M.base_30.one_bg2 = lighten(M.base_30.one_bg, -6)
-  M.base_30.one_bg3 = lighten(M.base_30.one_bg2, -6)
-  M.base_30.grey_fg = lighten(M.base_30.grey, -10)
-  M.base_30.grey_fg2 = lighten(M.base_30.grey, -5)
+}}
+
+M.base_30.statusline_bg = M.base_30.black2
+M.base_30.lightbg = M.base_30.one_bg
+M.base_30.one_bg2 = lighten(M.base_30.one_bg, -6)
+M.base_30.one_bg3 = lighten(M.base_30.one_bg2, -6)
+M.base_30.grey_fg = lighten(M.base_30.grey, -10)
+M.base_30.grey_fg2 = lighten(M.base_30.grey, -5)
 
 M.base_16 = {{
   base00 = "{color0}",
@@ -55,7 +55,7 @@ M.base_16 = {{
   base0F = "{color15}",
 }}
 
-M.type = "dark"
+M.type = "light"
 
 M.polish_hl = {{
   Operator = {{
