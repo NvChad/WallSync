@@ -21,13 +21,13 @@ return {
 }
 ```
 
-Then select the `chadwal` theme in your NvChad config and generate your colors again:
+Then select the `wallsync` theme in your NvChad config and generate your colors again:
 
 ```bash
 wal -i <image>
 ```
 
-WallSync installs the Pywal templates automatically, watches `~/.cache/wal/base46-dark.lua`, `~/.cache/wal/base46-light.lua`, and `~/.cache/wal/colors`, copies the active theme to NvChad's `base46/themes/chadwal.lua`, and reloads NvChad when the generated theme changes.
+WallSync installs the Pywal templates automatically, watches `~/.cache/wal/base46-dark.lua`, `~/.cache/wal/base46-light.lua`, and `~/.cache/wal/colors`, copies the active theme to NvChad's `base46/themes/wallsync.lua`, and reloads NvChad when the generated theme changes.
 
 ### Configuration
 
@@ -45,32 +45,38 @@ The default setup is enough for a standard NvChad installation. You can override
     debounce_ms = 500,
     -- Optional: force "dark" or "light" if your generator does not update ~/.cache/wal/colors.
     mode = nil,
+    -- Optional: path to the base46 plugin if it is NOT a sibling of WallSync.
+    -- base46_path = vim.fn.expand "~/.local/share/nvim/lazy/base46",
+    -- Optional: where Matugen templates are copied (used by matugen/config.toml).
+    -- matugen_templates_dir = vim.fn.expand "~/.local/share/wallsync",
   },
 }
 ```
 
 Available commands:
 
-- `:WallSyncInstallTemplates` copies the bundled Pywal templates to `~/.config/wal/templates`.
+- `:WallSyncInstallTemplates` copies the bundled Pywal templates to `~/.config/wal/templates` and the bundled Matugen templates to `~/.local/share/wallsync`.
 - `:WallSyncStart` starts the file watchers for the current Neovim session.
 - `:WallSyncSync` manually syncs the currently generated Base46 theme.
 - `:WallSyncStop` stops the file watchers for the current Neovim session.
 
 ### Matugen support
 
+WallSync copies its Matugen templates to `~/.local/share/wallsync` on first run (or whenever `:WallSyncInstallTemplates` is invoked), so the Matugen config below uses the same absolute path regardless of which plugin manager you use.
+
 Add this to your `~/.config/matugen/config.toml` file:
 
 ```toml
 [templates.nvim]
-input_path = '~/.local/share/nvim/lazy/WallSync/templates/matugen.lua'
+input_path = '~/.local/share/wallsync/matugen.lua'
 output_path = '~/.cache/wal/base46-dark.lua'
 
 [templates.nvimlight]
-input_path = '~/.local/share/nvim/lazy/WallSync/templates/matugen.lua'
+input_path = '~/.local/share/wallsync/matugen.lua'
 output_path = '~/.cache/wal/base46-light.lua'
 
 [templates.pywal]
-input_path = '~/.local/share/nvim/lazy/WallSync/templates/waltemplate'
+input_path = '~/.local/share/wallsync/waltemplate'
 output_path = '~/.cache/wal/colors'
 
 [config.custom_colors.red]
@@ -114,13 +120,13 @@ The Matugen template also writes NvChad's `M.type` from Matugen's `{{ mode }}`
 value, so the generated Base46 theme carries the same dark/light mode that
 Matugen used for the color scheme.
 
-If your Lazy install path or repository directory name is different, update the three `input_path` values accordingly. Then generate your theme again:
+Then generate your theme again:
 
 ```bash
 matugen image <image>
 ```
 
-Select `chadwal` theme and enjoy!
+Select `wallsync` theme and enjoy!
 
 ## Demo
 https://github.com/user-attachments/assets/933c97f2-4566-406c-8c04-e2e9f0f3f6da

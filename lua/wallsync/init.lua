@@ -18,13 +18,15 @@ local defaults = {
     dark = vim.fn.expand "~/.config/wal/templates/base46-dark.lua",
     light = vim.fn.expand "~/.config/wal/templates/base46-light.lua",
   },
+  matugen_templates_dir = vim.fn.expand "~/.local/share/wallsync",
   cache = {
     dark = vim.fn.expand "~/.cache/wal/base46-dark.lua",
     light = vim.fn.expand "~/.cache/wal/base46-light.lua",
   },
   colors_file = vim.fn.expand "~/.cache/wal/colors",
-  theme_output = vim.fn.stdpath "data" .. "/lazy/base46/lua/base46/themes/chadwal.lua",
-  fallback_theme = vim.fn.stdpath "data" .. "/lazy/base46/lua/base46/themes/gruvchad.lua",
+  base46_path = nil,
+  theme_output = nil,
+  fallback_theme = nil,
   reload = function()
     require("nvchad.utils").reload()
   end,
@@ -46,6 +48,14 @@ end
 local function plugin_root()
   local source = debug.getinfo(1, "S").source:sub(2)
   return vim.fn.fnamemodify(source, ":p:h:h:h")
+end
+
+local function base46_themes_dir()
+  if state.config.base46_path then
+    return state.config.base46_path .. "/lua/base46/themes"
+  end
+
+  return vim.fn.fnamemodify(plugin_root(), ":h") .. "/base46/lua/base46/themes"
 end
 
 local function notify(message, level)
@@ -203,10 +213,20 @@ function M.install_templates()
     installed = copy_file(source, destination, false) and installed
   end
 
+  local matugen_dir = state.config.matugen_templates_dir
+  if matugen_dir then
+    vim.fn.mkdir(matugen_dir, "p")
+    for _, name in ipairs({ "matugen.lua", "waltemplate" }) do
+      local source = path_join(root, "templates", name)
+      local destination = path_join(matugen_dir, name)
+      installed = copy_file(source, destination, false) and installed
+    end
+  end
+
   if installed then
-    notify "Installed Pywal templates"
+    notify "Installed WallSync templates"
   else
-    notify("Could not install every Pywal template", vim.log.levels.WARN)
+    notify("Could not install every WallSync template", vim.log.levels.WARN)
   end
 
   return installed
@@ -321,8 +341,12 @@ end
 function M.setup(options)
   state.config = vim.tbl_deep_extend("force", vim.deepcopy(defaults), options or {})
 
+  local themes_dir = base46_themes_dir()
+  state.config.theme_output = themes_dir .. "/wallsync.lua"
+  state.config.fallback_theme = themes_dir .. "/gruvchad.lua"
+
   vim.api.nvim_create_user_command("WallSyncInstallTemplates", M.install_templates, {
-    desc = "Install WallSync Pywal templates",
+    desc = "Install WallSync Pywal and Matugen templates",
     force = true,
   })
   vim.api.nvim_create_user_command("WallSyncStart", M.start, {
